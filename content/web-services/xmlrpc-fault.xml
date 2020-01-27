@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8">
+<methodResponse>
+    <fault>
+        <value><string>First parameter must be
+        an integer.</string></value>
+    </fault>
+</methodResponse>

@@ -1,0 +1,53 @@
+Outline
+-------
+
+Introduction
+
+   * Introduction
+   * Problems
+   * Contributions
+   * Outline
+   
+== part ==
+
+Background
+
+   * WS technologies
+   * Model checking with timed automata
+
+== part ==
+
+Protocol modeling & analysis
+
+   * Timed protocols + modeling discussion
+   * Compatibility and replaceability analysis
+   * Timed protocol operators
+   * C/R classes & characterization using the operators
+   * + related work
+
+Theoretical properties of the protocol operators
+
+   * Protocol timed automata
+   * Characterization of protocol timed automata
+   * Algorithms
+   * + related work
+
+== part ==
+
+Implementation & validation
+
+   * ServiceMosaic
+   * Prototype
+   * Usage scenario beyond "just" analysis, look beyond that
+   * + related work
+
+== part ==
+   
+Conclusion and future work
+
+The quotation
+-------------
+
+“If you find that you're spending almost all your time on theory, start turning some attention to practical things; it will improve your theories. If you find that you're spending almost all your time on practice, start turning some attention to theoretical things; it will improve your practice.”
+
+Donald Knuth

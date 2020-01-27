@@ -1,0 +1,120 @@
+% ........................................................................... %
+
+We conclude this document by summarizing the contributions. We then provide research and application perspectives beyond this work. Finally, we recall the publications on which this work is based.
+
+% ........................................................................... %
+
+\section{Summary}
+
+% ........................................................................... %
+
+This work has revisited, formalized and further extended the concepts presented in \cite{FTBB,BBFC04,BCT-CAISE03,KBBB+04} by providing an extended model for web services business protocols that supports timing abstractions. The level of abstraction that drove the design of this model was developed on the grounds of a study of real-world scenarios related to web services. The model can be leveraged for fine-grained protocol compatibility and replaceability analysis based on a set of protocol manipulation and comparison operators. We showed that the decision problems surrounding their implementation are decidable, thanks to the mapping and the identification of a novel class of timed automata which is closed under complementation and for which the language inclusion problem is decidable, all of this despite the major issue of having $\varepsilon$-labeled switches with clocks resets. Another issue was with the mapping from timed protocols to timed automata itself, as \MInvoke constraints are not easy to represent and enforce in timed automata. We also presented our initial prototype as part of the ServiceMosaic project and gave an application case study.\\
+
+We believe that modeling and analysis techniques with formal foundations such as the ones that we have presented will help at transforming the development and the maintenance of web services based applications from an ``art'', requiring a substantial amount of manual interventions, to a model-driven process that is automated to a large extent.
+
+% ........................................................................... %
+
+\section{Perspectives beyond protocol analysis}
+
+% ........................................................................... %
+
+The concepts and techniques presented in this thesis focused on both a model for describing service protocols that includes timing constraints, and on compatibility / replaceability analysis between two such protocol instances. While already being innovative by themselves, we believe that those contributions can play a significant role when leveraged in the following contexts.
+
+\paragraph{Protocol discovery and querying.}
+It would be interesting to have protocol repositories as part of service-oriented infrastructures. Such repositories would contain timed protocols for each referenced service. They could either be based on existing repository infrastructures (e.g., UDDI and ebXML), or be standalone (e.g., given a service, point to its WSDL and timed protocol). Users and applications could then leverage them by performing queries based on protocols. Given a protocol, a repository could be queried for services whose protocols would be compatible (or replaceable).
+
+There are several challenges linked to this type of application. The first one is to provide a large-scale, efficient physical representation for timed protocols (e.g., XML files, relational databases or XML databases). The second one is to provide an efficient indexing technique for retrieval based on compatibility and replaceability. While the timed protocol operators allow to assess either compatibility or replaceabilty between two protocols, it is clearly not advisable to take the input protocol from a query and test each protocol from the repository.
+
+Some exploratory work has begun in the APIS Research Group, Clermont-Ferrand. The first results show promising outcomes in terms of compatibility and replaceability based services retrieval.
+
+\paragraph{Web services testing.}
+Providing automated testing at different levels (e.g., unit-testing or functional testing) is critical in today applications. This is becoming even more true in the case of service-oriented computing, as often one has no control on the services it uses. A service may respect a given protocol today, and an upgrade performed tomorrow may introduce a small change that breaks some of its clients. Worse, the changes can happen without any notification having been sent, as a service may not know all of its requesters. Both the model of timed protocols and compatibility/replaceability analysis have a significant role to play for improving web services testing practices. Indeed, protocol-based analysis can be used to detect incompatible protocol updates, while the model by itself can be used for generating conversations in the test cases.
+
+Providing the basic infrastructure for running tests is not a big concern as extending existing tools is relatively easy (e.g., JUnit and TestNG are common testing frameworks\footnote{See \url{http://junit.org/} and \url{http://testng.org/}.}). The bigger challenges reside in generating test cases for a given service. Ideally, the set of generated test cases would provide full test coverage in a minimal number of cases. There are two research problems here:
+\begin{enumerate}
+  
+  \item generating conversations that would each form the skeleton of a test case, and
+  
+  \item inject both meaningful and erroneous data in messages.
+  
+\end{enumerate}
+In terms of conversations generation, one promising technique would be to start from timed protocols and reuse work on automated tests generation in timed automata \cite{NielsenS03,NielsenS01}.
+
+\paragraph{Runtime stateful support.}
+There is today little support in existing tools and frameworks for stateful web services. In many cases, support for stateful interactions has to be implemented manually. This means that developers need to cater with correlation and state management instead of ``just'' creating their service interfaces.
+
+We propose to leverage the timed protocols model to facilitate the creation of stateful web services. The core idea is to keep service interfaces development simple by taking out such cross-cutting concerns out of the actual implementation code. The framework would be based on:
+\begin{enumerate}
+  
+  \item a correlation component that intercepts messages to correlate them with service requester instances, and
+  
+  \item a conversation controller that checks if the intercepted message does not violate the service protocol, and
+  
+  \item a dispatcher that forwards messages to the actual service implementation with correlation and state information having been attached transparently to the message context.
+  
+\end{enumerate}
+
+\paragraph{Timed protocol discovery and adaptation techniques.}
+Existing work in ServiceMosaic projects tackled the two different problems of protocol discovery and adaptation \cite{Motahari-NezhadSBC07,BenatallahCGNT05,MBMCC-WWW07}. The protocol model being used was the untimed one from \cite{FTBB}. As such, a natural perspective is to extend it for timed protocols.
+
+\paragraph{``Agile'' composition.}
+Today, developing an application by composing existing services (e.g., in BPEL) is arguably a very static process. We envision ``agile'' frameworks based on some of the components above for facilitating the development and the maintenance of service-based compositions. In this perspective, timed protocols play a critical role (both the model and compatibility / replaceability analysis). The following frameworks would be part of this.
+\begin{itemize}
+  
+  \item A development framework that would support the development of a composition using BPEL. It would allow developing the composition without specifying some or all of the services to be involved. Then, it would be able to query a protocols repository for compatible services, meaning that it would allow for \emph{rapid prototyping} by testing different combinations of services. Also, the framework would deal with the assembly details so that developers can almost ``drag and drop'' services in BPEL processes. Finally, it would also assist in developing adapters when services protocols would not be completely compatible with the BPEL process. Conversely, it would assist in adapting the BPEL process itself if the developer does not want to create adapters.
+  
+  \item A runtime framework would assist when changes get necessary. Indeed, a given service may have to be replaced, either because of unavailability or simply because the composition developers have a compelling reason to do so. In this regard, we can note that having test cases and running them periodically could be useful for rapidly spotting composition breakages. The framework would query a repository for replaceability to find a new service. Again, it would assist in developing adapters or changing the BPEL process definition so as to respect business protocols. In particular, such a framework would make it easier to cope with failures by reducing replacement costs and delays.
+  
+\end{itemize}
+
+% ........................................................................... %
+
+\section{Publications}
+
+% ........................................................................... %
+
+Parts and preliminary versions of this work have been published.
+
+We started in \cite{BCPT05a,BBFC+05b} with a simple extension of business protocols that featured only \MInvoke constraints. We had introduced protocol operator algorithms tailored for the model, but it suffered from  expressiveness problems. While many \CInvoke constraints could be encoded using \MInvoke-based constructions, many complex ones could not. Also, the \MInvoke constraints always referred to the last action, which is a strong limitation by itself. Finally, the model suffered a states explosion problem when encoding \CInvoke constraints using \MInvoke primitives. The timed protocol model presented here subsumes this initial work.
+
+The model evolved up to a new model presented in \cite{PongeBCT07} which features complex \CInvoke and \MInvoke constraints. It also introduces the reuse of the framework of timed automata for deriving the timed protocol operator properties. The model presented in this thesis contains a few tweaks that make it more expressive with respect to the \MInvoke constraints.
+
+The approach has been presented as part of the larger ServiceMosaic project in \cite{BCTPM06-SM}. A demonstration featuring the ServiceMosaic tools was given in \cite{NezhadSBCPT07}.
+
+\subsubsection{International refereed conferences}
+\begin{itemize}
+
+	\item Julien Ponge, Farouk Toumani, Boualem Benatallah and Fabio Casati. \textbf{Fine-grained Compatibility and Replaceability Analysis of Timed Web Service Protocols}. \emph{In the 26th International Conference on Conceptual Modeling (ER).} Auckland, New Zealand. November 2007.
+	
+	\item Boualem Benatallah, Fabio Casati, Julien Ponge and Farouk Toumani. \textbf{On Temporal Abstractions of Web Services Protocols}. \emph{Proceedings of CAiSE Forum 2005.} Porto, Portugal. June 2005.
+
+\end{itemize}
+
+\subsubsection{National refereed conferences}
+\begin{itemize}
+
+	\item Boualem Benatallah, Fabio Casati, Julien Ponge, Farouk Toumani. \textbf{Compatibility and replaceability analysis for timed web service protocols}. \emph{In BDA 2005}. Saint-Malo, France. October 2005.
+
+\end{itemize}
+
+\subsubsection{Refereed journals}
+\begin{itemize}
+    
+    \item Julien Ponge, Boualem Benatallah, Fabio Casati and Farouk Toumani. \textbf{Analysis and Applications of Timed Service Protocols}. To appear in ACM Transactions on Software Engineering and Methodology (TOSEM).
+
+	\item Boualem Benatallah, Fabio Casati, Farouk Toumani, Julien Ponge and Hamid Reza Motahari Nezhad. \textbf{Service Mosaic: A Model-Driven Framework for Web Services Life-Cycle Management}. \emph{IEEE Internet Computing, vol. 10, no. 4, pp. 55-63}. July/August 2006.
+
+\end{itemize}
+
+\subsubsection{Refereed workshops and demonstrations}
+\begin{itemize}
+
+	\item Hamid Motahari, Regis Saint-Paul, Boualem Benatallah, Fabio Casati, Julien Ponge and Farouk Toumani. \textbf{ServiceMosaic: Interactive Analysis and Manipulations of Service Conversations}. \emph{In International Conference on Data Engineering (ICDE'07).} Istanbul, Turkey. April 2007.
+	
+	\item Julien Ponge, \textbf{A New Model For Web Services Timed Business Protocols}. \emph{Atelier ``Conception des systemes d'information et services Web''- Conf\'erence INFORSID. Hammamet}. Tunisia, May 2006.
+	
+	\item Julien Ponge, \textbf{Modeling and Analysing Web Services Protocols}. \emph{In IBM PhD Student Symposium at ICSOC 2005}. Amsterdam, The Netherlands, December 2005.
+
+\end{itemize}
+
+% ........................................................................... %

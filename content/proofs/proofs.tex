@@ -1,0 +1,213 @@
+% ........................................................................... %
+
+\chapter{Proofs}
+\label{chap:proofs}
+
+% ........................................................................... %
+
+\section{Proof of Theorem~\ref{thm:mi-expressiveness}}
+\label{proof:mi-expressiveness}
+
+% ........................................................................... %
+
+\begin{proof}
+%
+We need to show that $\varepsilon$-transitions in protocol timed automata cannot always be removed, i.e., there are protocol timed automata for which there doesn't exist equivalent automata without $\varepsilon$-transitions. To do that, we exhibit the protocol timed automaton $A$ depicted on Figure~\ref{fig:precise-time} and use the notions of \emph{precise time} and \emph{precise actions} that were introduced in the Theorem~24 of \cite{BBVD+99} as a tool to identify timed languages that can only be recognized by timed automata featuring $\varepsilon$-transitions. The proof is virtually the same as the one of Corollary~29 in \cite{BBVD+99}.
+
+It is easy to check that $A$ is a protocol timed automaton. $A$ presents 2 $\varepsilon$-transitions lying on directed cycles, hence we don't know if they can be removed using the techniques presented in Section~8 in \cite{BBVD+99}.
+
+Let us now suppose that $\mathcal{L}(A)$ can be recognized by a timed automaton $A'$ without any $\varepsilon$-transition. Note that $A'$ is free of diagonal constraints (e.g., constraints of the form $x - y \;\#\; c$). $A'$ can be rendered disjunction-free without any loss of generality (see \cite{BBVD+99} for techniques and discussion). In order to leverage the Theorem~24 of \cite{BBVD+99}, we define $C_{\mbox{max}} = 1$ (no constant in the guards of $A$ is larger than $1$). Let also $\delta > 0$. $A$ can recognize timed words of the form
+$$
+  (b, \delta_1) \cdot (b, \delta_2) \cdots (b, \delta_{d - 1}) \cdot (a, d) \cdot (a, d + 1) \cdots
+$$
+where $d \in \N$, $d \geq C_{\mbox{max}}$ and $\delta_i \in (i-1, i) \setminus \delta \N$ for all $0 < i < d$. Let $P$ a path of $A'$ that accepts such a timed word. Given that the $a$-labeled events occur at integer times, their occurrences should be \emph{precise} in $P$. Also, $d \geq C_{\mbox{max}}$, hence from Theorem~24 of \cite{BBVD+99}, there exist some occurrence of $b$ that should be precise in $P$ which is not possible as $\delta_i \not\in \delta \N$ for any $0 < i < d$. Consequently,  $\mathcal{L}(A)$ cannot be recognized by a timed automaton without $\varepsilon$-transitions.
+%
+\end{proof}
+
+% ........................................................................... %
+
+\section{Proof of Lemma~\ref{lemma:inhib}}
+
+% ........................................................................... %
+
+\begin{proof}
+$\inhib(g) =
+    (x_1 - x \;\mathtt{not}(\#_1)\; k_1 - k) \vee 
+    \cdots \vee 
+    (x_j - x \;\mathtt{not}(\#_j)\; k_j - k) \vee
+    (x_{j+1} - x_{j+1}' \;\mathtt{not}(\#_{j+1})\; k_{j+1}) \vee
+    \cdots \vee 
+    (x_{m} - x_{m}' \;\mathtt{not}(\#_{m})\; k_{m})$
+
+For every $i \in \{1, \cdots, j \}$, note that $(x_i - x \;\mathtt{not}(\#_i)\; k_i - k)$ continuously evaluates to either $\mathtt{true}$ or $\mathtt{false}$ while the current location is $l$. Also, note that when $(x = k)$ is satisfied,
+$$(x_i - x \;\mathtt{not}(\#_i)\; k_i - k) = (x_i \;\mathtt{not}(\#_i)\; k_i)$$
+which is the exact negation of the clause $(x_i \;\#_i\; k_i) \in g'$.
+
+For every $i \in \{j+1, \cdots, m\}$, $(x_{i} - x_{i}' \;\mathtt{not}(\#_{i})\; k_{i})$ is the negation of the clause $(x_{i} - x_{i}' \;\#_{i}\; k_{i}) \in g'$.
+
+Consequently, when any clause of $g'$ is $\mathtt{false}$, $\inhib(g) = \mathtt{true}$ and, conversely, when every clause of $g'$ is $\mathtt{true}$ then $\inhib(g) = \mathtt{false}$.
+\label{proof:inhib}
+\end{proof}
+
+% ........................................................................... %
+
+\section{Proof of Lemma~\ref{lemma:permits}}
+
+% ........................................................................... %
+
+\begin{proof}
+Let us check the implication.
+$$
+(g_j = \mathtt{false}) \bigvee (\permits(g_j) = \mathtt{false}) \wedge (\permits(g_i) = \mathtt{true}) = \mathtt{true}
+$$
+is equivalent to
+$$
+(\permits(g_j) = \mathtt{true}) \bigvee (\permits(g_j) = \mathtt{false}) \wedge (\permits(g_i) = \mathtt{true}) = \mathtt{true}
+$$
+which reduces to
+$$
+\underbrace{(\permits(g_j) = \mathtt{true})}_{\mathtt{false} \mbox{ \tiny{as} } g_j = \mathtt{true}} \bigvee \underbrace{(\permits(g_i) = \mathtt{true}) = \mathtt{true}}_{\permits(g_i) = \mathtt{true}}
+$$
+and the implication is verified. Indeed, $\permits(g_i) = \mathtt{true}$, else this would mean that the switch whose guard is $\widetilde{g_i}$ had already been activated.
+\label{proof:permits}
+\end{proof}
+
+% ........................................................................... %
+
+\section{Proof of Theorem~\ref{thm:mi-enforcement}}
+
+% ........................................................................... %
+
+\begin{proof}
+Let us compute the cases where $\inhib(g)$ evaluates to $\mathtt{false}$. We assume that $y \in Y$ is the clock that is reset on every switch whose target location is $l$. We compute and expand the negation:
+\begin{align*}
+    \neg\permits(g) & = (x > k) \\
+    & \wedge ((x \leq k) \vee (x - y \leq k)) \\
+    & \wedge ((x \leq k) \vee (x - y > k) \vee \neg\inhib(g)) \\
+    & \wedge ((x \neq k) \vee \neg\inhib(g)) \\  
+   \intertext{we make a first development:}
+    & = ((x = k) \vee (x \geq k) \wedge (x - y \leq k)) \\
+    & \wedge ((x < k) \vee (x \neq k) \wedge (x - y > k) \\
+    & \vee (x \neq k) \wedge \neg\inhib(g) \\
+    & \vee (x \leq k) \wedge \neg\inhib(g) \\
+    & \vee (x - y > k) \wedge \neg\inhib(g) \\
+    & \vee \neg\inhib(g)) \\
+    \intertext{and a second one:}
+    & = (x = k) \wedge \neg\inhib(g) \\
+    & \vee (x = k) \wedge (x - y > k) \wedge \neg\inhib(g) && \text{\texttt{false}} \\
+    & \vee (x > k) \wedge (x - y \leq k) \wedge \neg\inhib(g) \\
+    & \vee (x = k) \wedge (x - y \leq k) \wedge \neg\inhib(g) \\
+    & \vee (x \geq k) \wedge (x - y \leq k) \wedge \neg\inhib(g) \\
+    \intertext{by reducing the last 3 disjunctions:}
+    \neg\permits(g) & = (x = k) \wedge \neg\inhib(g) \\
+    & \vee (x \geq k) \wedge (x - y \leq k) \wedge \neg\inhib(g) \\
+    & = (x \geq k) \wedge (x - y \leq k) \wedge \neg\inhib(g) && \text{(1)}
+\end{align*}
+(1): $((x = k) = \mathtt{true}) \Longrightarrow ((x - y \leq k) = \mathtt{true})$.
+
+This means that $\permits(g)$ disables switches when:
+\begin{enumerate}
+  
+  \item $(x = k)$ is satisfied as well as $g'$, resulting in the $\varepsilon$-labeled switch whose guard is $g$ to be enabled, or
+  
+  \item $l$ was entered before $(x = k)$ was satisfied, $g'$ was satisfied when $(x = k)$ was, and the current clocks valuation satisfies $(x \geq k)$, forcing the $\varepsilon$-labeled switch to be taken.
+  
+\end{enumerate}
+\label{proof:mi-enforcement}
+\end{proof}
+
+% ........................................................................... %
+
+\section{Proof of Lemma \ref{lemma:pta-determinism}}
+\label{proof:pta-determinism}
+
+% ........................................................................... %
+
+\begin{proof}
+Let us consider a location $l$ that offers several switches, including $n > 0$ $\varepsilon$-labeled ones. By considering two switches from $l$, three cases are possible.
+\begin{enumerate}
+
+	\item The switches have both labels that are not $\varepsilon$. By definition their guards are disjoint.
+	
+	\item One switch $e_i$ ($i \in \{1, \cdots, n\}$) has $\varepsilon$ as its label with a guard
+	$$(g_i \bigwedge\limits_{1 \leq j \neq i \leq n} \permits(g_j))$$
+	and the other switch has a label that is not $\varepsilon$ and a guard
+	$$(g \bigwedge\limits_{1 \leq j \leq n} \permits(g_j))$$
+	The product of the guards contains a sub-clause $(g_i \wedge \permits(g_i))$ which is false: the guards are disjoint.
+	
+	\item The two switches have $\varepsilon$ as their label. The product of their guards will make a sub-clause of the following form to appear:
+	$$(x_i = k_i) \wedge g_i' \wedge \permits(g_j) \wedge (x_j = k_j) \wedge g_j' \wedge \permits(g_i)$$
+	($i$ and $j$ belong to $\{1, \cdots, n\}$ with $i \neq j$). As $\permits(g_j) \wedge g_j'$ is false, the guards are disjoint.
+
+\end{enumerate}
+\end{proof}
+
+% ........................................................................... %
+
+\section{Proof of Theorem~\ref{thm:closure-intersection}}
+
+% ........................................................................... %
+
+\begin{proof}
+The proposed constructions yields a timed automaton that qualifies as a protocol timed automaton with respect to Definition~\ref{def:pta}. Let us have a look at the specificities of protocol timed automata that required an extension of the construction compared to regular timed automata \cite{RADLD94}.
+
+The introduction of $\varepsilon$-labeled switches in the resulting automaton preserves determinism. Indeed, given a pair of those switches, the step 3 of the construction makes sure that either both switches are triggered at the same time, or one will be triggered before the other one. Without the addition of a third $\varepsilon$-labeled switch that corresponds to both being triggered at the same time, and without the addition of inequality clauses in the original switches, there could be indeterminism, thus effectively breaking closure under intersection.
+
+Finally, the guards rewriting step keeps them sound with respect to their original clocks. Indeed, consider any clock $x_e$ from either of the input automata and its mapped clocks set $\{ x_{e,e1}, x_{e,e2}, \cdots, x_{e,en} \}$ ($n > 0$) in the resulting automaton. Then per construction:
+\begin{itemize}
+  
+  \item $x_e$ is reset implies that for any $i \in \{1, 2, \cdots, n\}$, $x_{e,ei}$ is also reset, and
+  
+  \item $i \in \{1, 2, \cdots, n\}$, $x_{e,ei}$ is reset implies that $x_e$ is also reset.
+  
+\end{itemize}
+Consequently, the guard of both the input and resulting automata exhibit the same behaviors since the clocks that they refer to have synchronous resets.
+\label{proof:closure-intersection}
+\end{proof}
+
+% ........................................................................... %
+
+\section{Proof of Theorem~\ref{thm:closure-complement}}
+
+% ........................................................................... %
+
+\begin{proof}
+The construction of $A^*$ adds one location $q$ to $A$ as well as one new switch per symbol of the alphabet and per location of $A$ plus $q$. We first show that the construction preserves determinism, and that given an input symbol, it can be recognized for any clocks valuation when the current location doesn't have any $\varepsilon$-labeled switch.
+
+As every new switch guard is defined as the negation of the disjunctions of the guards of the switches from the same label, the intersection of the guards of every switch on the same label for a location $l$ is necessarily false, meaning that those guards are disjoint. In the case where a location $l$ does not offer any $\varepsilon$-labeled switch, it is also easy to check that the disjunction of the guards of the switches having the same label from $l$ is true as in \cite{RADLD94}.
+
+Let us now consider a location $l$ having $n > 0$ $\varepsilon$-labeled switches $g_{\varepsilon i}$ ($1 \leq i \leq n$). We also consider any symbol $a$ of the alphabet and the $m > 0$ guards of the $a$-labeled switches from $l$: $\{g_1, \cdots, g_m \}$ (again, given $1 \leq j \leq m$, $g_j$ is considered without its $\permits$ function clauses). Let us compute the disjunction of the $a$-labeled switches guards:
+$$
+  \left( g_1 \bigwedge\limits_{1 \leq i \leq n} \permits(g_{\varepsilon i}) \right)
+  \bigvee \cdots \bigvee
+  \left( g_m \bigwedge\limits_{1 \leq i \leq n} \permits(g_{\varepsilon m}) \right)
+$$
+By construction there exists $j \in \{1, \cdots, m\}$ such that $g_j = \neg \left( \bigvee\limits_{1 \leq k \neq j \leq m} g_k \right)$, hence the previous disjunction reduces to:
+$$ \bigwedge\limits_{1 \leq i \leq n} \permits(g_{\varepsilon i}) $$
+which means that $a$ is recognized from $l$ under \MInvoke semantics. However, $\overline{A}$ must also recognize $a$ when this expression evaluates to false, which is clearly not possible from $l$. 
+
+Let $v$ be a clocks valuation such that $a$ is to be recognized and
+$$ v \models \left( \bigwedge\limits_{1 \leq i \leq n} \permits(g_{\varepsilon i}) = \mathtt{false} \right)$$
+We can make the following remarks:
+\begin{enumerate}
+  
+  \item the current location is not $l$ anymore as a $\varepsilon$-labeled switch has been taken for the first clock valuation that stopped satisfying the previous expression, and
+  
+  \item the current location change through the $\varepsilon$-labeled switch was instantaneous.
+  
+\end{enumerate}
+Let us call the current location $l'$. By construction, it offers $a$-labeled switches. From the remarks above, the guard of every switch satisfies 
+$$ \neg \left( \bigwedge\limits_{1 \leq i \leq n} \permits(g_{\varepsilon i}) \right)$$
+for the clocks valuation $v$.
+
+Consequently, $a$ can always be recognized from $l$ and the locations available through its $\varepsilon$-labeled switches:
+$$
+  \left( \bigwedge\limits_{1 \leq i \leq n} \permits(g_{\varepsilon i}) \right)
+  \bigvee
+  \neg \left( \bigwedge\limits_{1 \leq i \leq n} \permits(g_{\varepsilon i}) \right)
+  = \mathtt{true}
+$$
+\label{proof:closure-complement}
+\end{proof}
+
+% ........................................................................... %

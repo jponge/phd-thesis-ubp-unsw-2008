@@ -1,0 +1,142 @@
+% ........................................................................... %
+
+The introduction of this thesis first presents the context in the field of web services and application integration. We then look at the research issues behind this work, the contributions and finally give an outline of the document.
+
+% ........................................................................... %
+
+\section{Context}
+
+% ........................................................................... %
+
+Web services are increasingly gaining acceptance as a framework for facilitating
+application-to-application interactions within and across enterprises \cite{Alonso04}. Application interoperability
+has been and still is a difficult issue due to difficulties created by heterogeneous and autonomous
+systems. Web services provide abstractions and technologies for exposing enterprise applications as
+services and make them programmatically accessible through standardized interfaces. Indeed, the main
+benefit they bring to application integration is that of standardization, in terms of description
+languages, coordination, and interaction protocols \cite{Alonso04,ws_cacm_special_issue,PTDL07,PH07}.
+Standardization at interface definition language (WSDL) and transport protocol (SOAP) has enabled
+basic interoperability at the messaging layer. Indeed, developers are using SOAP and WSDL to
+integrate enterprise applications \cite{WS-standards}. This is by itself a huge improvement over previous application integration middlewares (e.g., RPC and messaging systems) as no costly adapters have to be developed so that the systems can interoperate (e.g., network protocol entry points and data representation converters).\\
+
+While much progress has been made toward providing basic interoperability, there is still a lot to
+be done to simplify service development and interaction. In particular, an important aspect of Web
+services that affects interoperability is that services are loosely-coupled, that is, they are not
+developed only to interact with specific clients but are meant to serve the needs of many different (and potentially unknown) 
+clients, possibly developed by different teams or even different companies. Hence, developers of
+client applications need to be aware of all functional and non-functional aspects of a service to be
+able to understand if they can interoperate with a service and how to develop clients that can
+interact correctly with the service. 
+As such, service descriptions are specifications of the syntactic or semantic properties of a service that are made available to potential clients, for example with the purpose of:
+\begin{enumerate}
+  \item assisting developers in creating clients that can correctly use and interact with a service, and 
+  \item enabling the selection, either at design time or at runtime, of services that match the clients needs.
+\end{enumerate}
+
+Hence, service descriptions need to be richer than ``just''
+descriptions of interfaces as in conventional middleware (e.g, Corba IDL). Specifically, it is commonly accepted that
+a service description should include not only the interface, but also the \emph{business protocol}
+supported by the service, i.e., the specification of possible message exchange sequences
+(conversations) that are supported by the service \cite{BBFC04}.
+Tools supporting service development today are mainly concerned with interoperability at the lower
+levels of the service stack (e.g. mappings from WSDL to Java and vice versa, or making two SOAP-based
+systems talk to each other). There is little support for protocol modeling and management.\\
+
+Protocols can be specified using BPEL (\emph{Business Process Execution Language} \cite{WSBPEL2}) or any of the many other formalisms developed for this purpose (e.g., \cite{BBFC04,FTBB,berardithesis}).
+%
+Providing service descriptions is not in itself sufficient to facilitate development and binding. In addition to descriptions, we need formal methods and software tools for automatically analyzing service descriptions to:
+(i) identify if interaction between a client and a service is possible, and if it is,
+(ii) identify which conversations can be carried out between two services, to help developers to check if these include all and only the desired ones, and if it is not,
+(iii) understand mismatches between protocols and, if possible, create adapters to allow interactions to occur. \\
+
+The need for formal methods and software tools for such type of analysis is widely recognized, and many approaches have been developed to this end. In \cite{BBFC04,BBFC04b,FTBB}, an approach, a model for business protocols and a framework for protocol-based analysis had been presented. The availability of such analysis concepts and tools is quite powerful in that it allows us to assess compatibility in both top-down and bottom-up development approaches. 
+%
+The \emph{ServiceMosaic project} \cite{BCTPM06-SM} aims at developing a model-driven framework for web service life-cycle management. Business protocol management is a key concern in the ServiceMosaic tools set. In addition to protocol design and analysis tools, it also includes facilities for adapting services at the protocol level and for discovering protocol models from service execution logs. As such, the work that we present here is being developed as part of the ServiceMosaic effort.
+
+% ........................................................................... %
+
+\section{Research issues}
+
+% ........................................................................... %
+
+The present work focuses on the important category of protocols that include time-related constraints (called \emph{timed protocols} in the following).
+Time is a crucial abstraction that has been studied in several works in research fields such as workflow systems \cite{LTIM06,DMMZ06,BWJ02} and even web services \cite{berardi03finite,KazhamiakinPP06,DCPVC06}. There are countless examples of  behaviors that involve timing issues in any kind of protocol~\cite{BBFC04}, from business protocol for web services (e.g., see the \emph{RosettaNet PIPs}), to interactions between traditional web-based services and users (see E-Commerce web sites such as \emph{Travelocity} or \emph{Amazon}), to lower level protocols such as TCP. Time-related behaviors range from session timeouts to ``logical'' deadlines with different kinds of behaviors (e.g., seats reserved on a flight needs to be paid within $n$ hours otherwise they are released). However, most approaches mainly consider time for performing traditional model checking verifications such as liveness (a condition can be satisfied), safety (a condition can never be satisfied) and testing the absence of deadlocks \cite{KazhamiakinPP06,DCPVC06,berardi03finite}.\\
+
+The work that we present here formalizes the timing constraints of the business protocol model and extends the analysis approach introduced in \cite{BBFC04,BBFC04b,FTBB}. The introduction of time aspects adds significant complexity to the problem compared to the case of ``simple'' business protocols from \cite{FTBB}.
+Many formal models enabling explicit representation of time exist (e.g., \emph{timed automata}, \emph{timed petri-nets}), all showing extreme difficulties to handle algorithmic analysis of timed models.
+For example, \emph{timed automata}, which are today considered as a standard modeling formalism to deal with timing constraints, suffer from undecidability of many problems such as language inclusion and complementation that are fundamental to system analysis and verification tasks \cite{RADLD94}.
+Such problems have been shown to be sensitive to several criteria (e.g., density of the time axis, type of constraints, presence of silent transitions, etc) \cite{RAPM04}. \\
+
+In our case, supporting compatibility and replaceability analysis requires tackling a number of challenges and producing several contributions, which we outline hereafter.
+
+% ........................................................................... %
+
+\section{Contributions}
+
+% ........................................................................... %
+
+Given the importance of considering time-related properties, we present a set of concepts and techniques, supported by a tool, for performing compatibility and replaceability analysis between timed protocols. The contributions are the following.
+
+\paragraph{Timed protocols model.}
+The first step consists in defining a protocol model, called \emph{timed business protocol} that enhances the business protocol model presented in \cite{BBFC04,BBFC04b,FTBB} by introducing time-related constraints.
+We identified two timing constraint primitives that we added to the model for which we give both a syntax and semantics.
+\begin{enumerate}
+
+	\item \CInvoke constraints define time windows during which an action can take place (e.g., receiving a purchase order acknowledgment), and
+	
+	\item \MInvoke constraints define triggers for implicit actions to take place (e.g., a timeout).
+
+\end{enumerate}
+Timed business protocols provide a precise understanding of the external behavior of a service, as one knows exactly which conversations are valid with respect to both the messages ordering and the timing at which those messages are exchanged. Syntax and semantics are required for timed protocols. As timed automata \cite{RADLD94} form a widely studied model for capturing timing requirements of systems, a link between timed protocols and timed automata allowed to re-use and derive properties. We will see that the task was not straightforward, especially as \MInvoke constraints are not easy to represent equivalently in timed automata.
+
+\paragraph{Timed protocols analysis.}
+The next step consists in defining analysis concepts for identifying compatibility and replaceability between timed protocols. To do that, we extended the work of \cite{FTBB} by introducing several flexible classes for both compatibility and replaceability, and by characterizing them using a set of protocol manipulation and comparison operators. By flexible, we mean that those classes cater for more than ``black or white'' compatibility or replaceability cases like it has traditionally been done for hardware and software components, as the versatile, fast-changing nature of web services requires flexibility for such an approach to be useful.
+
+In our timed protocol operators investigations, we chose to reuse and extend work from timed automata, and from there, we have obtained their decidability. To do that, we defined a semantic-preserving mapping between timed protocols and timed automata, leading to a novel class of timed automata that we called \emph{protocol timed automata}. The task is however not trivial, as:
+\begin{itemize}
+	
+	\item protocol timed automata exhibit $\varepsilon$-labeled switches with clock resets that make them strictly more expressive than timed automata \cite{BBVD+99}, keeping the traditional problems of language inclusion and complementation undecidable \cite{RADLD94}, and
+	
+	\item \MInvoke constraints semantics are hard to implement in timed automata as we will see in chapter~\ref{chap:timed-protocols}.
+	
+\end{itemize}
+The study of protocol timed automata allowed for two important theoretical results:
+\begin{enumerate}
+  
+  \item the class of protocol timed automata is closed under both intersection and complementation, making it the first such one among the existing classes of timed automata having $\varepsilon$-labeled switches with resets, and
+  
+  \item protocol operators remain decidable in the case of timed protocols as we derive techniques from timed automata. Had the class of protocol timed automata not been closed under complementation, those results would not have hold true.
+  
+\end{enumerate}
+
+\paragraph{ServiceMosaic prototype.}
+We implemented our approach in the context of a larger project called ServiceMosaic \cite{NezhadSBCPT07}. More specifically, we developed:
+\begin{itemize}
+
+	\item a business protocol model library
+	
+	\item a protocol manipulation and comparison operators library that also offers checking for all of the classes of protocol compatibility and replaceability
+	
+	\item a set of plug-ins for the Eclipse platform (see \url{http://www.eclipse.org/}) that includes a protocol editor and a visual interface for doing protocol analysis work.
+
+\end{itemize}
+The components developed in this project serve as the basis of many other ServiceMosaic projects and will be published under an open source license in 2008.\\
+
+The approach that we present is innovative in that it provides a fine-grained analysis of web service interactions, and timed automata are used in a different context of what they have been traditionally used for (i.e., model checking). Last but not least, few works have focused on timing abstractions in web services, and when it is the case, it is mainly for reusing model-checking techniques.
+
+% ........................................................................... %
+
+\section{Outline}
+
+% ........................................................................... %
+
+This thesis has been divided in the following three parts.
+
+\paragraph{Introduction and background.}
+The present chapter (chapter~\ref{chap:introduction}) provided an introduction. Chapter~\ref{chap:web-services} is an overview of web services and their origins in application integration. We also provided succinct materials on the related concepts and technologies. Finally, chapter~\ref{chap:timed-automata} provides background knowledge on the field of timed automata. It introduces the formalisms, classes and common problems that have been studied by the formal verification analysis community. This is especially interesting in the context of this work, as we make a different usage of timed automata than doing verification tasks.
+
+\paragraph{Protocol modeling and analysis.}
+Chapter~\ref{chap:timed-protocols} introduces the model of timed protocols that supersedes the business protocols of \cite{FTBB}. It gives both the syntax and semantics. It also gives the semantic-preserving mapping to protocol timed automata, and illustrates that implementing \MInvoke constraints in timed automata is everything but a straightforward task. Chapter~\ref{chap:protocol-analysis} presents the protocol-based compatibility and replaceability analysis concepts. They are a direct extension of what had been done in \cite{FTBB} as protocol operators have been upgraded to support timing constraints as well. Finally, chapter~\ref{chap:protocol-operators} studies the properties of protocol operators in the context of protocol timed automata. This is where we obtain their decidability by reusing some results from timed automata and contributing new ones (e.g., complementation of the class of protocol timed automata despite the presence of $\varepsilon$-labeled switches).
+
+\paragraph{Applications and perspectives.}
+Chapter~\ref{chap:protocols-project} presents the ServiceMosaic project and the tools that we developed as part of a subproject called ServiceMosaic Protocols. Chapter~\ref{chap:sample-usecase} provides one scenario where compatibility and replaceability analysis can be leveraged in the context of a BPEL-based composition of web services. Finally, chapter~\ref{chap:conclusion} opens perspectives for future work, and gives hints for applying the contributions of this work well beyond ``just'' timed protocol analysis.

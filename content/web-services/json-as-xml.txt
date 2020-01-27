@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<driver>
+    <name>Mark Webber</name>
+    <country>Australia</country>
+    <team>Williams-Cosworth</team>
+    <wins>0</wins>
+    <poles>0</poles>
+    <previous_teams>
+        <previous_team>
+            <name>Minardi-Cosworth</name>
+            <year>2003</year>
+        </previous_team>
+        <previous_team>
+            <name>Jaguar Racing</name>
+            <year>2004</year>
+        </previous_team>
+        <previous_team>
+            <name>Williams-BMW</name>
+            <year>2005</year>
+        </previous_team>
+    </previous_teams>
+</driver>

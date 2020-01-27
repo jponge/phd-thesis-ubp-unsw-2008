@@ -1,0 +1,166 @@
+% ........................................................................... %
+
+\documentclass[a4paper,12pt]{memoir}
+
+% ........................................................................... %
+
+\usepackage[
+	a4paper,
+	pdftitle = {Model-based~analysis~of~time-aware~web~services~interactions},
+	pdfauthor = {Julien~Ponge},
+	pdfsubject = {PhD~Thesis},
+	pdfkeywords = {
+		web~
+		service~
+		soa~
+		timed~
+		protocol~
+		automata~
+		analysis~
+		compatibility~
+		replaceabilty~
+		servicemosaic~
+	},
+	pdfview = {FitH},
+	pdfstartview = {FitH},
+	pdfborder = {0 0 0},
+	colorlinks = true,
+	linkcolor = black,
+	citecolor = blue,
+	filecolor = blue,
+	urlcolor = blue
+]{hyperref}
+\usepackage{memhfixc}
+
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage[latin1]{inputenc}
+
+\usepackage{url}
+\urlstyle{sf}
+
+\usepackage{graphicx}
+
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{amsthm}
+
+\usepackage{multirow}
+\usepackage{moreverb}
+
+\usepackage[sort&compress,square,colon,numbers]{natbib}
+
+% ........................................................................... %
+
+\renewcommand{\cite}[1]{(\citet{#1})}
+
+\newtheorem{definition}{Definition}
+\newtheorem{theorem}{Theorem}
+\newtheorem{corollary}{Corollary}
+\newtheorem{lemma}{Lemma}
+\newtheorem{property}{Property}
+\newtheorem{procedure}{Procedure}
+
+% ........................................................................... %
+
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Rpos}{\R_{\geq 0}}
+\newcommand{\Qpos}{\Q_{\geq 0}}
+\newcommand{\T}{\mathbb{T}}
+\newcommand{\val}{\mathcal{V}}
+
+\newcommand{\tm}{\texttrademark~}
+
+\newcommand{\CInvoke}{ \mbox{C-Invoke} }
+\newcommand{\MInvoke}{ \mbox{M-Invoke} }
+
+\DeclareMathOperator{\Polarity}{Polarity}
+\newcommand{\polarity}[2]{\Polarity(#1, #2)}
+
+\newcommand{\compop}{ \parallel^{\mathtt{TC}} }
+\newcommand{\intersop}{ \parallel^{\mathtt{TI}} }
+\newcommand{\diffop}{ \parallel^{\mathtt{TD}} }
+\newcommand{\projop}[3]{ \left[ #1 \compop #2 \right]_{#3} }
+
+\DeclareMathOperator{\map}{map}
+\DeclareMathOperator{\inhib}{inhib}
+\DeclareMathOperator{\permits}{permits}
+
+% ........................................................................... %
+
+% UNSW (strict) requirements
+%
+% \settrimmedsize{242mm}{150mm}{*}
+% \settrims{30mm}{20mm}
+% \setlrmarginsandblock{1mm}{1mm}{*}
+% \setlength{\uppermargin}{\headheight} \addtolength{\uppermargin}{\headsep}
+% \setlength{\lowermargin}{\uppermargin}
+% \setlength{\textheight}{\paperheight} \addtolength{\textheight}{-2\uppermargin}
+% \checkandfixthelayout
+
+\OnehalfSpacing
+
+\maxtocdepth{subsection}
+\maxsecnumdepth{subsection}
+
+\chapterstyle{demo}
+\pagestyle{ruled}
+
+% ........................................................................... %
+
+\begin{document}
+
+% ........................................................................... %
+
+\frontmatter
+
+%\include{content/french-front}
+\include{content/english-front}
+
+\cleardoublepage
+
+\tableofcontents
+\clearpage
+\listoffigures
+\clearpage
+\listoftables
+
+\cleardoublepage
+
+% ........................................................................... %
+
+\mainmatter
+
+\thispagestyle{plain}
+\epigraph{``If you find that you're spending almost all your time on theory, start turning some attention to practical things; it will improve your theories. If you find that you're spending almost all your time on practice, start turning some attention to theoretical things; it will improve your practice.''}{Donald Knuth}
+
+\include{content/background}
+\include{content/modeling-analysis}
+\include{content/applications}
+
+% ........................................................................... %
+
+\bibliographystyle{plainnat}
+\bibliography{biblio}
+
+\appendix
+
+\part{Appendix}
+
+\include{content/proofs/proofs}
+\include{content/extra/extra}
+
+\backmatter
+
+\cleardoublepage
+\include{content/production-notice}
+
+% ........................................................................... %
+
+\end{document}
+
+% ........................................................................... %
+
